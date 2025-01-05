@@ -24,7 +24,9 @@ jobs:
           npm install
 
       - name: Run tests
-        run: npm test
+        run: |
+          cd app
+          npm test
 
       - name: Build Docker image
         run: |
@@ -41,3 +43,5 @@ jobs:
         run: |
           kubectl apply -f manifests/deployment.yaml
           kubectl apply -f manifests/service.yaml
+
+##should work now
