@@ -30,6 +30,7 @@ jobs:
 
       - name: Build Docker image
         run: |
+          cd app
           docker build -t jadesolax/node_docker_image .
 
       - name: Push Docker image to Docker Hub
