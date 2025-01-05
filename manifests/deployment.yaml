@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: node-app
-        image: YOUR_DOCKER_IMAGE_URI
+        image: jadesolax/node_docker_image
         ports:
         - containerPort: 3000
