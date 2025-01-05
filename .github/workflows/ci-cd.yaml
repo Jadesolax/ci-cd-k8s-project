@@ -30,7 +30,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t YOUR_DOCKER_IMAGE_URI .
+          docker build -t jadesolax/YOUR_DOCKER_IMAGE_URI .
 
       - name: Push Docker image to Docker Hub
         run: |
