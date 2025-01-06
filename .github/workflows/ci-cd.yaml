@@ -42,6 +42,5 @@ jobs:
         # env:
         #   KUBECONFIG: ${{ secrets.KUBECONFIG }}
         run: |
-          cd manifests
           kubectl apply -f manifests/deployment.yaml
           kubectl apply -f manifests/service.yaml
