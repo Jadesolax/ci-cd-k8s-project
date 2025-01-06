@@ -39,10 +39,9 @@ jobs:
           docker push jadesolax/node_docker_image
 
       - name: Deploy to Kubernetes
-        env:
-          KUBECONFIG: ${{ secrets.KUBECONFIG }}
+        # env:
+        #   KUBECONFIG: ${{ secrets.KUBECONFIG }}
         run: |
+          cd manifests
           kubectl apply -f manifests/deployment.yaml
           kubectl apply -f manifests/service.yaml
-
-##should work now
