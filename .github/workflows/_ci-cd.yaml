@@ -10,29 +10,45 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
-      # Step 3: Install dependencies
       - name: Install dependencies
         run: |
           cd app
           npm install
 
-      # Step 4: Run tests
       - name: Run tests
         run: |
           cd app
           npm test
 
-      # Step 5: Configure AWS credentials
+      # - name: Build Docker image
+      #   run: |
+      #     cd app
+      #     docker build -t jadesolax/node_docker_image .
+
+      # - name: Push Docker image to Docker Hub
+      #   run: |
+      #     echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+      #     docker push jadesolax/node_docker_image
+
+      # - name: Deploy to Kubernetes
+      #   env:
+      #      KUBECONFIG: ${{ secrets.KUBECONFIG }}
+      #   run: |
+      #     kubectl apply -f manifests/deployment.yaml
+      #     kubectl apply -f manifests/service.yaml
+
+
+
+
+      # Step 5: Configure AWS credentialss
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
@@ -56,16 +72,11 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-      # Step 8: Decode kubeconfig
-      - name: Decode kubeconfig
-        run: |
-          echo "${{ secrets.KUBECONFIG }}" | base64 --decode > /tmp/kubeconfig
-
-      # Step 9: Deploy to EKS
+      # Step 8: Deploy to EKS
       - name: Deploy to EKS
         env:
-          KUBECONFIG: /tmp/kubeconfig
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}
         run: |
           cd manifests
-          kubectl apply -f deployment.yaml
-          kubectl apply -f service.yaml
+          kubectl apply -f manifests/deployment.yaml
+          kubectl apply -f manifests/service.yaml
