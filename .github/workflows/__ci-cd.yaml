@@ -56,17 +56,23 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-      # Step 8: Decode kubeconfig
-      - name: Decode kubeconfig
-        run: |
-          echo "${{ secrets.KUBECONFIG }}" | base64 --decode > /tmp/kubeconfig
+      # Step 8: Set up Terraform
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
 
-      # Step 8: Decode kubeconfig
+      # Step 9: Initialize and apply Terraform
+      - name: Initialize and apply Terraform
+        run: |
+          cd terraform
+          terraform init
+          terraform apply -auto-approve
+
+      # Step 10: Decode kubeconfig
       - name: Decode kubeconfig
         run: |
           echo "${{ secrets.KUBECONFIG_BASE64 }}" | base64 --decode > /tmp/kubeconfig
 
-      # Step 9: Deploy to EKS
+      # Step 11: Deploy to EKS
       - name: Deploy to EKS
         env:
           KUBECONFIG: /tmp/kubeconfig
@@ -74,3 +80,30 @@ jobs:
           cd manifests
           kubectl apply -f deployment.yaml
           kubectl apply -f service.yaml
+
+      # Step 12: Debug manifests directory
+      - name: Debug manifests directory
+        run: |
+          ls -R manifests
+
+      # Step 13: Wait for deployment to stabilize
+      - name: Wait for deployment to stabilize
+        run: |
+          sleep 30  # Wait for 30 seconds
+          kubectl get pods -o wide
+
+      # Step 14: Verify deployment
+      - name: Verify deployment
+        run: |
+          kubectl get deployments -o wide
+          kubectl get pods -o wide
+
+      # Step 15: Verify service
+      - name: Verify service
+        run: |
+          kubectl get svc node-app-service -o wide
+
+      # Step 16: Check pod logs
+      - name: Check pod logs
+        run: |
+          kubectl logs -l app=node-app
