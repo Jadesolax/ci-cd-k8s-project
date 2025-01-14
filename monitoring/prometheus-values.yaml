@@ -1,0 +1,7 @@
+prometheus:
+  prometheusSpec:
+    scrapeInterval: 15s
+    retention: 30d
+
+alertmanager:
+  enabled: true
